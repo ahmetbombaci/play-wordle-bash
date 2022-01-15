@@ -3,9 +3,16 @@
 # DEBUG_MODE=debug
 DEBUG_MODE=$1
 
-CLUE_CORRECT=+
-CLUE_NOTEXIST=-
-CLUE_WRONGPOS=x
+GREEN='\033[0;32m'
+RED='\033[0;31m'
+BLUE='\033[0;34m'
+# WHITE='\033[0;37m'
+RESET='\033[0m'
+
+CLUE_CORRECT=${GREEN}+${RESET}
+CLUE_NOTEXIST=${RED}-${RESET}
+CLUE_WRONGPOS=${BLUE}x${RESET}
+
 
 validate_input() {
 	# input must be 5 chars only
@@ -23,26 +30,33 @@ check_input() {
 	user_input=$1
 	secret_word=$2
 	match_result=""
+	colorized_input=""
 
 	for (( i=0; i<${#user_input}; i++ )); do
-		[[ $DEBUG_MODE = "debug" ]] && echo "${user_input:$i:1}"
-		[[ $DEBUG_MODE = "debug" ]] && echo "${secret_word:$i:1}"
-		if [ "${user_input:$i:1}" = "${secret_word:$i:1}" ]; then
-			[[ $DEBUG_MODE = "debug" ]] && echo "$CLUE_CORRECT"
+		[[ $DEBUG_MODE = "debug" ]] && echo -n "${user_input:$i:1}"
+		[[ $DEBUG_MODE = "debug" ]] && echo -n "${secret_word:$i:1}"
+		current_char=${user_input:$i:1}
+		if [ "${current_char}" = "${secret_word:$i:1}" ]; then
+			[[ $DEBUG_MODE = "debug" ]] && echo -en "$CLUE_CORRECT"
 			match_result=${match_result}"$CLUE_CORRECT"
-		elif [[ $secret_word =~ ${user_input:$i:1} ]]; then
-			[[ $DEBUG_MODE = "debug" ]] && echo "$CLUE_WRONGPOS"
+			colorized_input=${colorized_input}"$GREEN${current_char}$RESET"
+		elif [[ $secret_word =~ ${current_char} ]]; then
+			[[ $DEBUG_MODE = "debug" ]] && echo -en "$CLUE_WRONGPOS"
 			match_result=${match_result}"$CLUE_WRONGPOS"
+			colorized_input=${colorized_input}"$BLUE${current_char}$RESET"
 		else
-			[[ $DEBUG_MODE = "debug" ]] && echo "$CLUE_NOTEXIST"
+			[[ $DEBUG_MODE = "debug" ]] && echo -en "$CLUE_NOTEXIST"
 			match_result=${match_result}"$CLUE_NOTEXIST"
+			colorized_input=${colorized_input}"$RED${current_char}$RESET"
 		fi
+		[[ $DEBUG_MODE = "debug" ]] && echo ""
 	done
 
-	echo "$user_input"
-	echo "$match_result"
+	# echo "$user_input"
+	echo -e "$colorized_input"
+	echo -e "$match_result"
 
-	[[ $match_result = "+++++" ]] && echo "Wow, you found it!" && return 0
+	[[ $user_input = "$secret_word" ]] && echo "Wow, you found it!" && return 0
 	echo "You need to make another guess" && return 1
 
 }
@@ -51,14 +65,14 @@ welcome() {
 	echo "Welcome to word game!"
 	echo "Find the secret word"
 	echo "You will get a clue after each guess"
-	echo "If a character is correct and in the correct place, you will see ${CLUE_CORRECT}"
-	echo "If a character is correct but in the wrong place, you will see ${CLUE_WRONGPOS}"
-	echo "If a character is not found in the secret word, you will see ${CLUE_NOTEXIST}"
+	echo -e "If a character is correct and in the correct place, you will see ${CLUE_CORRECT}"
+	echo -e "If a character is correct but in the wrong place, you will see ${CLUE_WRONGPOS}"
+	echo -e "If a character is not found in the secret word, you will see ${CLUE_NOTEXIST}"
 	echo "Let's assume that secret word is 'CLAIM' and your first guess is 'CABLE'"
 	echo "You will see:"
 	echo "-------------"
 	echo "CABLE"
-	echo "${CLUE_CORRECT}${CLUE_WRONGPOS}${CLUE_NOTEXIST}${CLUE_NOTEXIST}${CLUE_NOTEXIST}"
+	echo -e "${CLUE_CORRECT}${CLUE_WRONGPOS}${CLUE_NOTEXIST}${CLUE_NOTEXIST}${CLUE_NOTEXIST}"
 	echo "-------------"
 	echo ""
 	echo "Game on!"
