@@ -3,6 +3,12 @@
 # DEBUG_MODE=debug
 DEBUG_MODE=$1
 
+# GAME_MODE=random
+# GAME_MODE=preselected
+# Avoid totally random word since dictionary has non-English words 
+# Help of 3rd party is needed for this process
+GAME_MODE=$2
+
 GREEN='\033[0;32m'
 RED='\033[0;31m'
 BLUE='\033[0;34m'
@@ -121,21 +127,25 @@ welcome() {
 setup_alphabet
 welcome
 
-wordcount=$( wc dict5.txt | awk '{print $1}' )
-randomnumber=$( date +%s%N | cut -b10-19 )
-randomline=$( expr "$randomnumber" % "$wordcount" )
-# randomword=$( ( sed '10q;d' dict5.txt ) )
-# sed "${randomline}q;d" dict5.txt
-myrandomword=$( sed "${randomline}q;d" dict5.txt )
-randomword_up=${myrandomword^^}
-echo "${randomword_up}" > hint_current_random_word.secret
-
-
 [[ $DEBUG_MODE = "debug" ]] && echo "Debug mode is enabled"
 
-[[ $DEBUG_MODE = "debug" ]] && echo "Word count: " $(( wordcount ))
-[[ $DEBUG_MODE = "debug" ]] && echo "Random number: " $(( randomnumber ))
-[[ $DEBUG_MODE = "debug" ]] && echo "Random line: " $(( randomline ))
+if [ "$GAME_MODE" = "preselected" ]; then 
+	[[ $DEBUG_MODE = "debug" ]] && echo "Preselected mode is enabled"
+	randomword_up=$( cat hint_current_random_word.secret ) 
+else
+	wordcount=$( wc dict5.txt | awk '{print $1}' )
+	randomnumber=$( date +%s%N | cut -b10-19 )
+	randomline=$( expr "$randomnumber" % "$wordcount" )
+	# randomword=$( ( sed '10q;d' dict5.txt ) )
+	# sed "${randomline}q;d" dict5.txt
+	myrandomword=$( sed "${randomline}q;d" dict5.txt )
+	randomword_up=${myrandomword^^}
+	echo "${randomword_up}" > hint_current_random_word.secret
+	[[ $DEBUG_MODE = "debug" ]] && echo "Word count: " $(( wordcount ))
+	[[ $DEBUG_MODE = "debug" ]] && echo "Random number: " $(( randomnumber ))
+	[[ $DEBUG_MODE = "debug" ]] && echo "Random line: " $(( randomline ))
+fi
+
 [[ $DEBUG_MODE = "debug" ]] && echo "Random word: $randomword_up"
 
 guesscnt=0

@@ -8,13 +8,28 @@ setup:
 	cat words.txt | grep -E "^[A-Za-z]{5}$$" > dict5.txt
 
 play:
+	./play-wordle.sh normal preselected
+
+play-random:
 	./play-wordle.sh
 
+pick-a-word:
+	./pick-a-word.sh
+
 debug:
+	./play-wordle.sh debug preselected
+
+debug-random:
 	./play-wordle.sh debug
+
+debug-pick-a-word:
+	./pick-a-word.sh debug
 
 shellcheck:
 	shellcheck play-wordle.sh
+
+shellcheck-pick-a-word:
+	shellcheck pick-a-word.sh
 
 reveal-1st:
 	cat hint_current_random_word.secret | cut -c 1-1
