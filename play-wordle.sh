@@ -37,11 +37,21 @@ update_alphabet() {
 	char_list[$char_pos]="$2$1${RESET}"
 }
 
-validate_input() {
+validate_length() {
 	# input must be 5 chars only
 	user_input=$1
 	[[ $user_input =~ ^[A-Za-z]{5}$ ]] && return 0
 	echo "Invalid input! Please enter only 5 chars" && return 1
+}
+
+validate_dictionary() {
+	grep -i "$1" dict5.txt && return 0
+	echo "Invalid input! Word does not exist in the dictionary!" && return 1
+}
+
+validate_input() {
+	validate_length "$1" && validate_dictionary "$1" && return 0
+	return 1
 }
 
 check_input() {
