@@ -18,9 +18,7 @@ ord() {
 }
 
 setup_alphabet() {
-
-	for x in {A..Z}
-	do
+	for x in {A..Z}; do
 		char_list+=("$x")
 	done
 }
@@ -38,9 +36,7 @@ update_alphabet() {
 }
 
 validate_length() {
-	# input must be 5 chars only
-	user_input=$1
-	[[ $user_input =~ ^[A-Za-z]{5}$ ]] && return 0
+	[[ $1 =~ ^[A-Za-z]{5}$ ]] && return 0
 	echo "Invalid input! Please enter only 5 chars" && return 1
 }
 
@@ -60,6 +56,12 @@ check_input() {
 	# $CLUE_CORRECT --> correct char in correct place
 	# $CLUE_NOTEXIST --> char does not exist in secret word
 	# $CLUE_WRONGPOS --> char exist in secret word but in a different position
+	# user_input =CABLE
+	# secret_word=CLAIM
+	# Output:
+	# CABLE
+	# +x---
+
 	user_input=$1
 	secret_word=$2
 	match_result=""
