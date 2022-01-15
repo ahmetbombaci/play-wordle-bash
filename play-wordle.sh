@@ -13,6 +13,29 @@ CLUE_CORRECT=${GREEN}+${RESET}
 CLUE_NOTEXIST=${RED}-${RESET}
 CLUE_WRONGPOS=${BLUE}x${RESET}
 
+ord() {
+  LC_CTYPE=C printf '%d' "'$1"
+}
+
+setup_alphabet() {
+
+	for x in {A..Z}
+	do
+		char_list+=("$x")
+	done
+}
+
+print_alphabet() {
+	echo -e "${char_list[*]}"
+}
+
+update_alphabet() {
+	# $1: letter (i.e A)
+	# $2: color (i.e $GREEN)
+	char_pos=$( ord "$1")
+	char_pos=$((char_pos-65))
+	char_list[$char_pos]="$2$1${RESET}"
+}
 
 validate_input() {
 	# input must be 5 chars only
@@ -40,14 +63,17 @@ check_input() {
 			[[ $DEBUG_MODE = "debug" ]] && echo -en "$CLUE_CORRECT"
 			match_result=${match_result}"$CLUE_CORRECT"
 			colorized_input=${colorized_input}"$GREEN${current_char}$RESET"
+			update_alphabet "$current_char" "$GREEN"
 		elif [[ $secret_word =~ ${current_char} ]]; then
 			[[ $DEBUG_MODE = "debug" ]] && echo -en "$CLUE_WRONGPOS"
 			match_result=${match_result}"$CLUE_WRONGPOS"
 			colorized_input=${colorized_input}"$BLUE${current_char}$RESET"
+			update_alphabet "$current_char" "$BLUE"
 		else
 			[[ $DEBUG_MODE = "debug" ]] && echo -en "$CLUE_NOTEXIST"
 			match_result=${match_result}"$CLUE_NOTEXIST"
 			colorized_input=${colorized_input}"$RED${current_char}$RESET"
+			update_alphabet "$current_char" "$RED"
 		fi
 		[[ $DEBUG_MODE = "debug" ]] && echo ""
 	done
@@ -55,6 +81,7 @@ check_input() {
 	# echo "$user_input"
 	echo -e "$colorized_input"
 	echo -e "$match_result"
+	print_alphabet
 
 	[[ $user_input = "$secret_word" ]] && echo "Wow, you found it!" && return 0
 	echo "You need to make another guess" && return 1
@@ -79,7 +106,7 @@ welcome() {
 	echo "--------"
 }
 
-
+setup_alphabet
 welcome
 
 wordcount=$( wc dict5.txt | awk '{print $1}' )
