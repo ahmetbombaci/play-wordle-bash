@@ -4,9 +4,12 @@
 DEBUG_MODE=$1
 
 # GAME_MODE=random
+# GAME_MODE=legacy
+#  - Uses old dictionary
 # GAME_MODE=preselected
-# Avoid totally random word since dictionary has non-English words 
-# Help of 3rd party is needed for this process
+#  - Avoid totally random word since dictionary has non-English words 
+#  - Help of 3rd party is needed for this process
+#  - left over from legacy code
 GAME_MODE=$2
 
 GREEN='\033[0;32m'
@@ -47,7 +50,11 @@ validate_length() {
 }
 
 validate_dictionary() {
-	grep -i "$1" dict5.txt && return 0
+	if [ "$GAME_MODE" = "legacy" ]; then 
+		grep -i "$1" dict5.txt && return 0
+	else
+		( grep -i "$1" solutions-mod.txt || grep -i "$1" nonsolutions-mod.txt ) && return 0
+	fi
 	echo "Invalid input! Word does not exist in the dictionary!" && return 1
 }
 
@@ -132,13 +139,23 @@ welcome
 if [ "$GAME_MODE" = "preselected" ]; then 
 	[[ $DEBUG_MODE = "debug" ]] && echo "Preselected mode is enabled"
 	randomword_up=$( cat hint_current_random_word.secret ) 
-else
+elif [ "$GAME_MODE" = "legacy" ]; then 
 	wordcount=$( wc dict5.txt | awk '{print $1}' )
 	randomnumber=$( date +%s%N | cut -b10-19 )
 	randomline=$( expr "$randomnumber" % "$wordcount" )
 	# randomword=$( ( sed '10q;d' dict5.txt ) )
 	# sed "${randomline}q;d" dict5.txt
 	myrandomword=$( sed "${randomline}q;d" dict5.txt )
+	randomword_up=${myrandomword^^}
+	echo "${randomword_up}" > hint_current_random_word.secret
+	[[ $DEBUG_MODE = "debug" ]] && echo "Word count: " $(( wordcount ))
+	[[ $DEBUG_MODE = "debug" ]] && echo "Random number: " $(( randomnumber ))
+	[[ $DEBUG_MODE = "debug" ]] && echo "Random line: " $(( randomline ))
+else
+	wordcount=$( wc solutions-mod.txt | awk '{print $1}' )
+	randomnumber=$( date +%s%N | cut -b10-19 )
+	randomline=$( expr "$randomnumber" % "$wordcount" )
+	myrandomword=$( sed "${randomline}q;d" solutions-mod.txt )
 	randomword_up=${myrandomword^^}
 	echo "${randomword_up}" > hint_current_random_word.secret
 	[[ $DEBUG_MODE = "debug" ]] && echo "Word count: " $(( wordcount ))

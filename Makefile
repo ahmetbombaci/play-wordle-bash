@@ -8,19 +8,25 @@ setup:
 	cat words.txt | grep -E "^[A-Za-z]{5}$$" > dict5.txt
 
 play:
+	./play-wordle.sh
+
+play-preselected:
 	./play-wordle.sh normal preselected
 
-play-random:
-	./play-wordle.sh
+play-legacy:
+	./play-wordle.sh normal legacy
 
 pick-a-word:
 	./pick-a-word.sh
 
 debug:
+	./play-wordle.sh debug
+
+debug-preselected:
 	./play-wordle.sh debug preselected
 
-debug-random:
-	./play-wordle.sh debug
+debug-legacy:
+	./play-wordle.sh debug legacy
 
 debug-pick-a-word:
 	./pick-a-word.sh debug
@@ -58,3 +64,5 @@ hint-bash-mod:
 hint-read-10th-line:
 	sed '10q;d' dict5.txt
 
+hint-word:
+	grep '^.a.o.$$' solutions-mod.txt
