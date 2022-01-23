@@ -2,20 +2,12 @@
 
 [Worldle](https://www.powerlanguage.co.uk/wordle/) in bash mode!
 
-Word list is obtained from https://github.com/dwyl/english-words
+Execute `make play` in order to play!
 
+Execute `make play-legacy` in order to play the game with linux dictionary words.
 
-Execute `make play-random` in order to play!
+Execute `make play-preselected` in order to find the word picked by your friend. 
+Ask you find to pick the word via `make pick-a-word`.
 
 Have fun!
-
-
-# Advanced Mode
-
-Word list database contains a lot of non-English words as well as 
-proper names. This makes the game challenging/annoying.
-
-Find a friend an ask to select a word via: `make pick-a-word`
-
-Then, try to find the word via `make play`
 

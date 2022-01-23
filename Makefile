@@ -1,11 +1,8 @@
-# Clone `words.txt` from https://raw.githubusercontent.com/dwyl/english-words/master/words.txt
-# See https://github.com/dwyl/english-words
-#
 # Makefile Tip 1: Escape $ with $$ 
 # https://stackoverflow.com/questions/2382764/escaping-in-makefile
 
 setup:
-	cat words.txt | grep -E "^[A-Za-z]{5}$$" > dict5.txt
+	cat /usr/share/dict/american-english | grep -E '^[A-Za-z]{5}$$' | awk '{print toupper($$0)}' > dict5.txt
 
 play:
 	./play-wordle.sh
