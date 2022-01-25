@@ -114,6 +114,7 @@ check_input() {
 }
 
 welcome() {
+	while IFS= read -r line; do printf '%s\n' "$line"; done < banner.txt
 	echo "Welcome to word game!"
 	echo "Find the secret word"
 	echo "You will get a clue after each guess"
