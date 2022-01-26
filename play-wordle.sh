@@ -29,6 +29,7 @@ ord() {
 setup_alphabet() {
 	for x in {A..Z}; do
 		char_list+=("$x")
+		char_greened+=(false)
 	done
 }
 
@@ -41,7 +42,13 @@ update_alphabet() {
 	# $2: color (i.e $GREEN)
 	char_pos=$( ord "$1")
 	char_pos=$((char_pos-65))
-	char_list[$char_pos]="$2$1${RESET}"
+	if [ "$GREEN" = "$2" ]; then
+		char_greened[$char_pos]=true
+		char_list[$char_pos]="$2$1${RESET}"
+	elif [ ${char_greened[$char_pos]} = false ]; then
+		char_list[$char_pos]="$2$1${RESET}"
+	fi
+
 }
 
 validate_length() {
