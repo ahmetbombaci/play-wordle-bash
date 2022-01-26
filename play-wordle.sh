@@ -60,7 +60,7 @@ validate_dictionary() {
 	if [ "$GAME_MODE" = "legacy" ]; then 
 		grep -iq "$1" dict5.txt && return 0
 	else
-		( grep -iq "$1" solutions-mod.txt || grep -i "$1" nonsolutions-mod.txt ) && return 0
+		( grep -iq "$1" solutions-mod.txt || grep -iq "$1" nonsolutions-mod.txt ) && return 0
 	fi
 	echo "Invalid input! Word does not exist in the dictionary!" && return 1
 }
