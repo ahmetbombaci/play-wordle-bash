@@ -58,9 +58,9 @@ validate_length() {
 
 validate_dictionary() {
 	if [ "$GAME_MODE" = "legacy" ]; then 
-		grep -i "$1" dict5.txt && return 0
+		grep -iq "$1" dict5.txt && return 0
 	else
-		( grep -i "$1" solutions-mod.txt || grep -i "$1" nonsolutions-mod.txt ) && return 0
+		( grep -iq "$1" solutions-mod.txt || grep -i "$1" nonsolutions-mod.txt ) && return 0
 	fi
 	echo "Invalid input! Word does not exist in the dictionary!" && return 1
 }
@@ -87,6 +87,18 @@ check_input() {
 	match_result=""
 	colorized_input=""
 
+	# During initial loop replace green chars with `_` for correct blue coloring for mismatches
+	eliminate_correct=""
+	for (( i=0; i<${#user_input}; i++ )); do
+		current_char=${user_input:$i:1}
+		if [ "${current_char}" = "${secret_word:$i:1}" ]; then
+			eliminate_correct="$eliminate_correct"_
+		else
+			eliminate_correct="$eliminate_correct${secret_word:$i:1}" 
+		fi
+		[[ $DEBUG_MODE = "debug" ]] && echo "Elimination: ${eliminate_correct}"
+	done
+
 	for (( i=0; i<${#user_input}; i++ )); do
 		[[ $DEBUG_MODE = "debug" ]] && echo -n "${user_input:$i:1}"
 		[[ $DEBUG_MODE = "debug" ]] && echo -n "${secret_word:$i:1}"
@@ -96,7 +108,15 @@ check_input() {
 			match_result=${match_result}"$CLUE_CORRECT"
 			colorized_input=${colorized_input}"$GREEN${current_char}$RESET"
 			update_alphabet "$current_char" "$GREEN"
-		elif [[ $secret_word =~ ${current_char} ]]; then
+		elif [[ $eliminate_correct =~ ${current_char} ]]; then
+			# Do coloring correctly for multi-char words
+			# A character can be blue if it is misplaced and its correct position is not found during guess 
+
+			# Secret: APPLE
+			# Guess : PAPER --> First P in blue and second P in green
+			# Guess : NASAL --> Both A can be blue although there is only one A
+			# Guess : ARRAY --> First A in green and the second A in red since there is only one A
+
 			[[ $DEBUG_MODE = "debug" ]] && echo -en "$CLUE_WRONGPOS"
 			match_result=${match_result}"$CLUE_WRONGPOS"
 			colorized_input=${colorized_input}"$BLUE${current_char}$RESET"
