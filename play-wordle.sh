@@ -88,16 +88,16 @@ check_input() {
 	colorized_input=""
 
 	# During initial loop replace green chars with `_` for correct blue coloring for mismatches
-	eliminate_correct=""
+	secret_mask_found=""
 	for (( i=0; i<${#user_input}; i++ )); do
 		current_char=${user_input:$i:1}
 		if [ "${current_char}" = "${secret_word:$i:1}" ]; then
-			eliminate_correct="$eliminate_correct"_
+			secret_mask_found="$secret_mask_found"_
 		else
-			eliminate_correct="$eliminate_correct${secret_word:$i:1}" 
+			secret_mask_found="$secret_mask_found${secret_word:$i:1}" 
 		fi
-		[[ $DEBUG_MODE = "debug" ]] && echo "Elimination: ${eliminate_correct}"
 	done
+	[[ $DEBUG_MODE = "debug" ]] && echo "Secret mask found: ${secret_mask_found}"
 
 	for (( i=0; i<${#user_input}; i++ )); do
 		[[ $DEBUG_MODE = "debug" ]] && echo -n "${user_input:$i:1}"
@@ -108,7 +108,7 @@ check_input() {
 			match_result=${match_result}"$CLUE_CORRECT"
 			colorized_input=${colorized_input}"$GREEN${current_char}$RESET"
 			update_alphabet "$current_char" "$GREEN"
-		elif [[ $eliminate_correct =~ ${current_char} ]]; then
+		elif [[ $secret_mask_found =~ ${current_char} ]]; then
 			# Do coloring correctly for multi-char words
 			# A character can be blue if it is misplaced and its correct position is not found during guess 
 
@@ -131,8 +131,8 @@ check_input() {
 	done
 
 	# echo "$user_input"
-	old_guesses="$old_guesses\n$colorized_input"
-	echo -e "$old_guesses"
+	history_print_helper="$history_print_helper\n$colorized_input"
+	echo -e "$history_print_helper"
 	echo -e "$match_result"
 	print_alphabet
 
@@ -195,7 +195,7 @@ fi
 [[ $DEBUG_MODE = "debug" ]] && echo "Random word: $randomword_up"
 
 guesscnt=0
-old_guesses=""
+history_print_helper=""
 
 while true; do
 	((guesscnt++))
