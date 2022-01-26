@@ -52,11 +52,12 @@ update_alphabet() {
 }
 
 validate_length() {
-	[[ $1 =~ ^[A-Za-z]{5}$ ]] && return 0
+	[[ $1 =~ ^[A-Za-z\?]{5}$ ]] && return 0
 	echo "Invalid input! Please enter only 5 chars" && return 1
 }
 
 validate_dictionary() {
+	[[ $1 =~ \? ]] && echo "Hint requested! Skipping dictionary validation..." && return 0
 	if [ "$GAME_MODE" = "legacy" ]; then 
 		grep -iq "$1" dict5.txt && return 0
 	else
@@ -103,11 +104,17 @@ check_input() {
 		[[ $DEBUG_MODE = "debug" ]] && echo -n "${user_input:$i:1}"
 		[[ $DEBUG_MODE = "debug" ]] && echo -n "${secret_word:$i:1}"
 		current_char=${user_input:$i:1}
-		if [ "${current_char}" = "${secret_word:$i:1}" ]; then
+		secret_char=${secret_word:$i:1}
+		if [ "${current_char}" = "${secret_char}" ]; then
 			[[ $DEBUG_MODE = "debug" ]] && echo -en "$CLUE_CORRECT"
 			match_result=${match_result}"$CLUE_CORRECT"
 			colorized_input=${colorized_input}"$GREEN${current_char}$RESET"
 			update_alphabet "$current_char" "$GREEN"
+		elif [ "$current_char" = '?' ]; then
+			echo "? --> ${secret_char}"
+			match_result=${match_result}"?"
+			colorized_input=${colorized_input}"$GREEN${secret_char}$RESET"
+			update_alphabet "$secret_char" "$GREEN"
 		elif [[ $secret_mask_found =~ ${current_char} ]]; then
 			# Do coloring correctly for multi-char words
 			# A character can be blue if it is misplaced and its correct position is not found during guess 
@@ -155,6 +162,9 @@ welcome() {
 	echo "CABLE"
 	echo -e "${CLUE_CORRECT}${CLUE_WRONGPOS}${CLUE_NOTEXIST}${CLUE_NOTEXIST}${CLUE_NOTEXIST}"
 	echo "-------------"
+	echo ""
+	echo "If you need a hint, use ? to reveal the letter"
+	echo "?ABLE will reveal the first letter"
 	echo ""
 	echo "Game on!"
 	echo "--------"
