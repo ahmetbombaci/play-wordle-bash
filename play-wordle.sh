@@ -5,9 +5,9 @@ DEBUG_MODE=$1
 
 # GAME_MODE=random
 # GAME_MODE=legacy
-#  - Uses old dictionary
+#  - Uses Ubuntu dictionary
 # GAME_MODE=preselected
-#  - Avoid totally random word since dictionary has non-English words 
+#  - Avoid totally random word since dictionary has less known or even non-English words 
 #  - Help of 3rd party is needed for this process
 #  - left over from legacy code
 GAME_MODE=$2
