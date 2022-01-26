@@ -104,7 +104,8 @@ check_input() {
 	done
 
 	# echo "$user_input"
-	echo -e "$colorized_input"
+	old_guesses="$old_guesses\n$colorized_input"
+	echo -e "$old_guesses"
 	echo -e "$match_result"
 	print_alphabet
 
@@ -167,6 +168,7 @@ fi
 [[ $DEBUG_MODE = "debug" ]] && echo "Random word: $randomword_up"
 
 guesscnt=0
+old_guesses=""
 
 while true; do
 	((guesscnt++))
