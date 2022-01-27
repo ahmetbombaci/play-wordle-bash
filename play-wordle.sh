@@ -181,7 +181,7 @@ if [ "$GAME_MODE" = "preselected" ]; then
 elif [ "$GAME_MODE" = "legacy" ]; then 
 	wordcount=$( wc dict5.txt | awk '{print $1}' )
 	randomnumber=$( date +%s%N | cut -b10-19 )
-	randomline=$( expr "$randomnumber" % "$wordcount" )
+	randomline=$(( "$randomnumber" % "$wordcount" ))
 	# randomword=$( ( sed '10q;d' dict5.txt ) )
 	# sed "${randomline}q;d" dict5.txt
 	myrandomword=$( sed "${randomline}q;d" dict5.txt )
@@ -193,7 +193,7 @@ elif [ "$GAME_MODE" = "legacy" ]; then
 else
 	wordcount=$( wc solutions-mod.txt | awk '{print $1}' )
 	randomnumber=$( date +%s%N | cut -b10-19 )
-	randomline=$( expr "$randomnumber" % "$wordcount" )
+	randomline=$(( "$randomnumber" % "$wordcount" ))
 	myrandomword=$( sed "${randomline}q;d" solutions-mod.txt )
 	randomword_up=${myrandomword^^}
 	echo "${randomword_up}" > hint_current_random_word.secret
