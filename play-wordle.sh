@@ -22,22 +22,22 @@ CLUE_CORRECT=${GREEN}+${RESET}
 CLUE_NOTEXIST=${RED}-${RESET}
 CLUE_WRONGPOS=${BLUE}x${RESET}
 
-ord() {
+function ord() {
   LC_CTYPE=C printf '%d' "'$1"
 }
 
-setup_alphabet() {
+function setup_alphabet() {
 	for x in {A..Z}; do
 		char_list+=("$x")
 		char_greened+=(false)
 	done
 }
 
-print_alphabet() {
+function print_alphabet() {
 	echo -e "${char_list[*]}"
 }
 
-update_alphabet() {
+function update_alphabet() {
 	# $1: letter (i.e A)
 	# $2: color (i.e $GREEN)
 	char_pos=$( ord "$1")
@@ -51,12 +51,12 @@ update_alphabet() {
 
 }
 
-validate_length() {
+function validate_length() {
 	[[ $1 =~ ^[A-Za-z\?]{5}$ ]] && return 0
 	echo "Invalid input! Please enter only 5 chars" && return 1
 }
 
-validate_dictionary() {
+function validate_dictionary() {
 	[[ $1 =~ \? ]] && echo "Hint requested! Skipping dictionary validation..." && return 0
 	if [ "$GAME_MODE" = "legacy" ]; then 
 		grep -iq "$1" dict5.txt && return 0
@@ -66,12 +66,12 @@ validate_dictionary() {
 	echo "Invalid input! Word does not exist in the dictionary!" && return 1
 }
 
-validate_input() {
+function validate_input() {
 	validate_length "$1" && validate_dictionary "$1" && return 0
 	return 1
 }
 
-check_input() {
+function check_input() {
 	# print $user_input
 	# use $CLUE_CORRECT , $CLUE_NOTEXIST, $CLUE_WRONGPOS to display matches
 	# $CLUE_CORRECT --> correct char in correct place
@@ -148,7 +148,7 @@ check_input() {
 
 }
 
-welcome() {
+function welcome() {
 	while IFS= read -r line; do printf '%s\n' "$line"; done < banner.txt
 	echo "Welcome to word game!"
 	echo "Find the secret word"
