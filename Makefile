@@ -16,6 +16,9 @@ play-legacy:
 pick-a-word:
 	./pick-a-word.sh
 
+unit-test:
+	./test-play-wordle.sh
+
 debug:
 	./play-wordle.sh debug
 
@@ -33,6 +36,9 @@ shellcheck:
 
 shellcheck-pick-a-word:
 	shellcheck pick-a-word.sh
+
+shellcheck-test-play-wordle:
+	shellcheck -x test-play-wordle.sh
 
 reveal-1st:
 	cat hint_current_random_word.secret | cut -c 1-1

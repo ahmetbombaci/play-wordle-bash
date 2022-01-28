@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # DEBUG_MODE=debug
+# DEBUG_MODE=unit-test
 DEBUG_MODE=$1
 
 # GAME_MODE=random
@@ -171,6 +172,9 @@ function welcome() {
 }
 
 setup_alphabet
+
+[[ $DEBUG_MODE = "unit-test" ]] && return 0
+
 welcome
 
 [[ $DEBUG_MODE = "debug" ]] && echo "Debug mode is enabled"
