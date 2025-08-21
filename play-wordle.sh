@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # DEBUG_MODE=debug
 # DEBUG_MODE=unit-test
@@ -22,6 +22,8 @@ RESET='\033[0m'
 CLUE_CORRECT=${GREEN}+${RESET}
 CLUE_NOTEXIST=${RED}-${RESET}
 CLUE_WRONGPOS=${BLUE}x${RESET}
+
+to_upper() { printf '%s' "$1" | tr '[:lower:]' '[:upper:]'; }
 
 function ord() {
   LC_CTYPE=C printf '%d' "'$1"
@@ -188,8 +190,8 @@ elif [ "$GAME_MODE" = "legacy" ]; then
 	randomline=$(( "$randomnumber" % "$wordcount" ))
 	# randomword=$( ( sed '10q;d' dict5.txt ) )
 	# sed "${randomline}q;d" dict5.txt
-	myrandomword=$( sed "${randomline}q;d" dict5.txt )
-	randomword_up=${myrandomword^^}
+        myrandomword=$( sed "${randomline}q;d" dict5.txt )
+        randomword_up=$(to_upper "$myrandomword")
 	echo "${randomword_up}" > hint_current_random_word.secret
 	[[ $DEBUG_MODE = "debug" ]] && echo "Word count: " $(( wordcount ))
 	[[ $DEBUG_MODE = "debug" ]] && echo "Random number: " $(( randomnumber ))
@@ -198,8 +200,8 @@ else
 	wordcount=$( wc solutions-mod.txt | awk '{print $1}' )
 	randomnumber=$( date +%s%N | cut -b10-19 )
 	randomline=$(( "$randomnumber" % "$wordcount" ))
-	myrandomword=$( sed "${randomline}q;d" solutions-mod.txt )
-	randomword_up=${myrandomword^^}
+        myrandomword=$( sed "${randomline}q;d" solutions-mod.txt )
+        randomword_up=$(to_upper "$myrandomword")
 	echo "${randomword_up}" > hint_current_random_word.secret
 	[[ $DEBUG_MODE = "debug" ]] && echo "Word count: " $(( wordcount ))
 	[[ $DEBUG_MODE = "debug" ]] && echo "Random number: " $(( randomnumber ))
@@ -216,7 +218,7 @@ while true; do
 
 	echo "[ ${guesscnt} ] Make a guess: "
 	read -r myguess1
-	guess1_up=${myguess1^^}
+        guess1_up=$(to_upper "$myguess1")
 
 	echo "Your guess is $guess1_up"
 	validate_input "$guess1_up" 
@@ -224,7 +226,7 @@ while true; do
 	do
 		echo "Make another guess: "
 		read -r myguess1
-		guess1_up=${myguess1^^}
+                guess1_up=$(to_upper "$myguess1")
 
 		echo "Your new guess is $guess1_up"
 		validate_input "$guess1_up"
